@@ -9,7 +9,7 @@ locals {
 
 
 module "resource_group" {
-  source      = "git::git@github.com:opz0/terraform-azure-resource-group.git?ref=master"
+  source      = "git::https://github.com/opz0/terraform-azure-resource-group.git?ref=v1.0.0"
   name        = "app5"
   environment = "tested"
   location    = "North Europe"
@@ -17,7 +17,7 @@ module "resource_group" {
 
 
 module "vnet" {
-  source              = "git::git@github.com:opz0/terraform-azure-vnet.git?ref=master"
+  source              = "git::https://github.com/opz0/terraform-azure-vnet.git?ref=v1.0.0"
   name                = "app"
   environment         = "test"
   resource_group_name = module.resource_group.resource_group_name
@@ -27,13 +27,13 @@ module "vnet" {
 
 
 module "name_specific_subnet" {
-  source = "git::git@github.com:opz0/terraform-azure-subnet.git?ref=master"
+  source = "git::https://github.com/opz0/terraform-azure-subnet.git?ref=v1.0.0"
 
   name                 = local.name
   environment          = local.environment
   resource_group_name  = module.resource_group.resource_group_name
   location             = module.resource_group.resource_group_location
-  virtual_network_name = module.vnet.vnet_name[0]
+  virtual_network_name = module.vnet.name
 
   #subnet
   specific_name_subnet  = true
@@ -64,8 +64,8 @@ module "firewall" {
   # name = "public-ip_name",
   # public_ip_address_id = "public-ip_resource_id"
   #   } ]
-  firewall_enable   = true
-  enable_diagnostic = true
+  firewall_enable = true
+  # enable_diagnostic = false
   #log_analytics_workspace_id = module.log-analytics.workspace_id
 
 }

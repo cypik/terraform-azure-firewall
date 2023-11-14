@@ -9,7 +9,7 @@ locals {
 
 
 module "resource_group" {
-  source      = "git::git@github.com:opz0/terraform-azure-resource-group.git?ref=master"
+  source      = "git::https://github.com/opz0/terraform-azure-resource-group.git?ref=v1.0.0"
   name        = "app21"
   environment = "tested"
   location    = "North Europe"
@@ -17,7 +17,7 @@ module "resource_group" {
 
 
 module "vnet" {
-  source              = "git::git@github.com:opz0/terraform-azure-vnet.git?ref=master"
+  source              = "git::https://github.com/opz0/terraform-azure-vnet.git?ref=v1.0.0"
   name                = "app"
   environment         = "test"
   resource_group_name = module.resource_group.resource_group_name
@@ -27,13 +27,13 @@ module "vnet" {
 
 
 module "name_specific_subnet" {
-  source = "git::git@github.com:opz0/terraform-azure-subnet.git?ref=master"
+  source = "git::https://github.com/opz0/terraform-azure-subnet.git?ref=v1.0.0"
 
   name                 = local.name
   environment          = local.environment
   resource_group_name  = module.resource_group.resource_group_name
   location             = module.resource_group.resource_group_location
-  virtual_network_name = module.vnet.vnet_name[0]
+  virtual_network_name = module.vnet.name
 
   #subnet
   specific_name_subnet  = true
@@ -62,16 +62,8 @@ module "firewall" {
   prefix_public_ip_names  = ["test-1", "test-2"]
   public_ip_prefix_length = 31
   enable_prefix_subnet    = true
-
-  # additional_public_ips = [{
-  # name = "public-ip_name",
-  # public_ip_address_id = "public-ip_resource_id"
-  #   } ]
-  firewall_enable     = true
-  policy_rule_enabled = true
-  enable_diagnostic   = false
-  # log_analytics_workspace_id = module.log-analytics.workspace_id
-
+  firewall_enable         = true
+  policy_rule_enabled     = true
   application_rule_collection = [
     {
       name     = "example_app_policy"

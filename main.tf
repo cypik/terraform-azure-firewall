@@ -1,6 +1,6 @@
 
 module "labels" {
-  source      = "git::git@github.com:opz0/terraform-azure-labels.git?ref=master"
+  source      = "git::https://github.com/opz0/terraform-azure-labels.git?ref=v1.0.0"
   name        = var.name
   environment = var.environment
   managedby   = var.managedby
@@ -55,7 +55,7 @@ resource "azurerm_firewall" "firewall" {
   threat_intel_mode   = var.threat_intel_mode
   sku_tier            = var.sku_tier
   sku_name            = var.sku_name
-  firewall_policy_id  = join("", azurerm_firewall_policy.policy.*.id)
+  firewall_policy_id  = join("", azurerm_firewall_policy.policy[*].id)
   tags                = module.labels.tags
   private_ip_ranges   = var.firewall_private_ip_ranges
   dns_servers         = var.dns_servers
@@ -67,7 +67,7 @@ resource "azurerm_firewall" "firewall" {
       # var.enable_ip_subnet will be true when individual public ip and prefix public ip both are to be deployed (none of them exist before) or only individual public ip are to be deployed.
       # var.enable_ip_subnet will be false when prefix_public_ip already exists and there are no individual public ip.
       subnet_id            = var.enable_ip_subnet ? it.key == 0 ? var.subnet_id : null : null
-      public_ip_address_id = azurerm_public_ip.public_ip.*.id[it.key]
+      public_ip_address_id = element(azurerm_public_ip.public_ip[*].id, it.key)
     }
   }
 
@@ -77,9 +77,9 @@ resource "azurerm_firewall" "firewall" {
     content {
       name = format("%s-%s-pipconfig", module.labels.id, it.value)
       # var.enable_prefix_subnet will only be true when prefix public ips are to be deployed during initial apply and there are no individual public ips to be created.
-      # Individual public ips can be deployed after initial apply and var.enable_ip_subnet variable must be false. 
+      # Individual public ips can be deployed after initial apply and var.enable_ip_subnet variable must be false.
       subnet_id            = var.enable_prefix_subnet ? it.key == 0 ? var.subnet_id : null : null
-      public_ip_address_id = azurerm_public_ip.prefix_public_ip.*.id[it.key]
+      public_ip_address_id = element(azurerm_public_ip.prefix_public_ip[*].id, it.key) ##azurerm_public_ip.prefix_public_ip[*].id[it.key]
     }
   }
 
@@ -111,7 +111,7 @@ resource "azurerm_firewall_policy" "policy" {
     for_each = var.identity_type != null && var.sku_policy == "Premium" && var.sku_tier == "Premium" ? [1] : []
     content {
       type         = var.identity_type
-      identity_ids = var.identity_type == "UserAssigned" ? [join("", azurerm_user_assigned_identity.identity.*.id)] : null
+      identity_ids = var.identity_type == "UserAssigned" ? [join("", azurerm_user_assigned_identity.identity[*].id)] : null
     }
   }
 }
@@ -128,7 +128,7 @@ resource "azurerm_user_assigned_identity" "identity" {
 resource "azurerm_firewall_policy_rule_collection_group" "app_policy_rule_collection_group" {
   count              = var.enabled && var.policy_rule_enabled ? 1 : 0
   name               = var.app_policy_collection_group
-  firewall_policy_id = var.firewall_policy_id == null ? join("", azurerm_firewall_policy.policy.*.id) : var.firewall_policy_id
+  firewall_policy_id = var.firewall_policy_id == null ? join("", azurerm_firewall_policy.policy[*].id) : var.firewall_policy_id
   priority           = 300
 
   dynamic "application_rule_collection" {
@@ -163,7 +163,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "app_policy_rule_collec
 resource "azurerm_firewall_policy_rule_collection_group" "network_policy_rule_collection_group" {
   count              = var.enabled && var.policy_rule_enabled ? 1 : 0
   name               = var.net_policy_collection_group
-  firewall_policy_id = var.firewall_policy_id == null ? join("", azurerm_firewall_policy.policy.*.id) : var.firewall_policy_id
+  firewall_policy_id = var.firewall_policy_id == null ? join("", azurerm_firewall_policy.policy[*].id) : var.firewall_policy_id
   priority           = 200
 
 
@@ -195,7 +195,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "network_policy_rule_co
 resource "azurerm_firewall_policy_rule_collection_group" "nat_policy_rule_collection_group" {
   count              = var.enabled && var.dnat-destination_ip && var.policy_rule_enabled ? 1 : 0
   name               = var.nat_policy_collection_group
-  firewall_policy_id = var.firewall_policy_id == null ? join("", azurerm_firewall_policy.policy.*.id) : var.firewall_policy_id
+  firewall_policy_id = var.firewall_policy_id == null ? join("", azurerm_firewall_policy.policy[*].id) : var.firewall_policy_id
   priority           = 100
 
   dynamic "nat_rule_collection" {

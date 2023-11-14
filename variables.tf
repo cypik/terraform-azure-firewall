@@ -35,24 +35,21 @@ variable "enabled" {
 }
 
 variable "resource_group_name" {
+  type        = any
   description = "A container that holds related resources for an Azure solution"
   default     = ""
-}
-
-variable "tags" {
-  description = "A map of tags to add to all resources"
-  type        = map(string)
-  default     = {}
 }
 
 #Public IP
 
 variable "public_ip_allocation_method" {
+  type        = any
   description = "Defines the allocation method for this IP address. Possible values are Static or Dynamic"
   default     = "Static"
 }
 
 variable "public_ip_sku" {
+  type        = any
   description = "The SKU of the Public IP. Accepted values are Basic and Standard. Defaults to Basic"
   default     = "Standard"
 }
@@ -123,16 +120,19 @@ variable "additional_public_ips" {
 }
 
 variable "application_rule_collection" {
+  type        = any
   default     = {}
   description = "One or more application_rule_collection blocks as defined below.."
 }
 
 variable "network_rule_collection" {
+  type        = any
   default     = {}
   description = "One or more network_rule_collection blocks as defined below."
 }
 
 variable "nat_rule_collection" {
+  type        = any
   default     = {}
   description = "One or more nat_rule_collection blocks as defined below."
 }
