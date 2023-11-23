@@ -26,7 +26,7 @@ for creating AZURE resources, and you can customize the inputs as needed. Below 
 ```hcl
 module "firewall" {
   depends_on          = [module.name_specific_subnet]
-  source              = "git::https://github.com/opz0/terraform-azure-firewall.git?ref=v1.0.0"
+  source              = "git::https://github.com/cypik/terraform-azure-firewall.git?ref=v1.0.0"
   name                = local.name
   environment         = local.environment
   resource_group_name = module.resource_group.resource_group_name
@@ -155,7 +155,7 @@ module "firewall" {
 ```hcl
 module "firewall-rules" {
   depends_on          = [module.firewall]
-  source              = "git::https://github.com/opz0/terraform-azure-firewall.git?ref=v1.0.0"
+  source              = "git::https://github.com/cypik/terraform-azure-firewall.git?ref=v1.0.0"
   name                = local.name
   environment         = local.environment
   policy_rule_enabled = true
@@ -278,7 +278,7 @@ module "firewall-rules" {
 ```hcl
 module "firewall" {
   depends_on              = [module.name_specific_subnet]
-  source                  = "git::https://github.com/opz0/terraform-azure-firewall.git?ref=v1.0.0"
+  source                  = "git::https://github.com/cypik/terraform-azure-firewall.git?ref=v1.0.0"
   name                    = local.name
   environment             = local.environment
   resource_group_name     = module.resource_group.resource_group_name
@@ -417,10 +417,10 @@ This example demonstrates how to create various AZURE resources using the provid
 - 'firewall_id': The ID of the Azure Firewall.
 
 ## Examples
-For detailed examples on how to use this module, please refer to the 'examples' directory within this repository.
+For detailed examples on how to use this module, please refer to the '[examples](https://github.com/cypik/terraform-azure-firewall/blob/master/_example)' directory within this repository.
 
 ## License
-This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/opz0/terraform-azure-firewall/blob/readme/LICENSE) file for more details.
+This Terraform module is provided under the '[License Name]' License. Please see the [LICENSE](https://github.com/cypik/terraform-azure-firewall/blob/master/LICENSE) file for more details.
 
 ## Author
 Your Name

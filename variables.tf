@@ -12,7 +12,7 @@ variable "environment" {
 
 variable "repository" {
   type        = string
-  default     = ""
+  default     = "https://github.com/cypik/terraform-azure-firewall"
   description = "Terraform current module repo"
 }
 
@@ -25,7 +25,7 @@ variable "label_order" {
 variable "managedby" {
   type        = string
   default     = ""
-  description = "ManagedBy, eg ''."
+  description = "ManagedBy, eg 'cypik'."
 }
 
 variable "enabled" {
